@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>OpenIssue | Priority Dashboard</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <!-- Scripts & Styles -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#a3a6ff",
+                        "primary-dim": "#6063ee",
+                        "secondary": "#a28efc",
+                        "tertiary": "#ffa5d9",
+                        "error": "#ff6e84",
+                        "surface": "#0a0e19",
+                        "surface-variant": "#202535",
+                        "surface-container-low": "#0f131f",
+                        "surface-container-high": "#1a1f2e",
+                        "surface-container-highest": "#202535",
+                        "on-surface": "#e8eafb",
+                        "on-surface-variant": "#a7aaba",
+                        "on-primary": "#0f00a4",
+                    },
+                    fontFamily: {
+                        "headline": ["Space Grotesk", "sans-serif"],
+                        "body": ["Manrope", "sans-serif"],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="styles.css" rel="stylesheet" />
+    <script defer src="script.js"></script>
+    <script src="http://localhost:5000/socket.io/socket.io.js"></script>
+    <script defer src="triage.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script defer src="priority-dashboard.js"></script>
+</head>
+
+<body class="bg-surface text-on-surface font-body overflow-x-hidden selection:bg-primary/30">
+    
+    <!-- SideNavBar -->
+    <aside id="sidebar" class="flex flex-col fixed left-0 top-0 h-screen w-64 border-r border-white/5 bg-[#0a0e19] shadow-[20px_0_40px_rgba(0,0,0,0.4)] z-[60] font-headline tracking-tight transition-transform duration-300 -translate-x-full md:translate-x-0">
+        <div class="p-8">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-[0_0_20px_rgba(163,166,255,0.4)]">
+                    <span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">dataset</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold tracking-tighter text-indigo-400 text-white">OpenIssue</h1>
+                    <p class="text-[10px] uppercase tracking-widest text-on-surface">AI Triage</p>
+                </div>
+            </div>
+            <nav class="space-y-2">
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-200 hover:text-white hover:bg-white/5 transition-all duration-300 hover:translate-x-1" href="index.html">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-200 hover:text-white hover:bg-white/5 transition-all duration-300 hover:translate-x-1" href="auto-labeling.html">
+                    <span class="material-symbols-outlined">label_important</span>
+                    <span>Auto Labeling</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-200 hover:text-white hover:bg-white/5 transition-all duration-300 hover:translate-x-1" href="issue-analysis.html">
+                    <span class="material-symbols-outlined">analytics</span>
+                    <span>Issue Analysis</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-200 hover:text-white hover:bg-white/5 transition-all duration-300 hover:translate-x-1" href="duplicate-detection.html">
+                    <span class="material-symbols-outlined">difference</span>
+                    <span>Duplicates</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-error font-bold border-r-2 border-error bg-white/5 transition-all duration-300 hover:translate-x-1 shadow-[inset_4px_0_0_rgba(255,110,132,0.8)]" href="priority-dashboard.html">
+                    <span class="material-symbols-outlined text-error">priority_high</span>
+                    <span class="text-error">Priority</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-200 hover:text-white hover:bg-white/5 transition-all duration-300 hover:translate-x-1" href="insights.html">
+                    <span class="material-symbols-outlined">insights</span>
+                    <span>Insights</span>
+                </a>
+                <a class="flex items-center gap-3 px-4 py-3 text-slate-200 hover:text-white hover:bg-white/5 transition-all duration-300 hover:translate-x-1" href="settings.html">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Settings</span>
+                </a>
+            </nav>
+        </div>
+        <div class="mt-auto p-6">
+            <button class="w-full py-2.5 bg-gradient-to-r from-primary to-primary-dim rounded-lg text-on-primary text-sm font-bold shadow-[0_0_20px_rgba(163,166,255,0.3)] hover:shadow-[0_0_25px_rgba(163,166,255,0.5)] transition-all">
+                Triage Now
+            </button>
+        </div>
+    </aside>
+
+    <!-- TopAppBar -->
+    <header class="flex items-center justify-between px-4 md:px-8 ml-0 md:ml-64 h-16 bg-surface/80 backdrop-blur-lg sticky top-0 z-40 transition-all duration-300 font-body font-medium border-b border-white/5">
+        <div class="flex items-center flex-1 gap-4">
+            <button id="sidebar-toggle" class="md:hidden p-2 text-slate-200 hover:bg-white/10 rounded-full transition-all">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+            <div class="relative w-full max-w-md hidden sm:block group">
+                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface text-sm">search</span>
+                <input class="w-full bg-surface-container-low-low border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-2 focus:ring-primary focus:bg-surface-container-low transition-all text-on-surface placeholder:text-white focus:bg-surface-container-high focus:border-primary" placeholder="Search parameters..." type="text" />
+            </div>
+        </div>
+        <div class="flex items-center gap-2 md:gap-4">
+            <button class="p-2 text-slate-200 hover:bg-white/10 rounded-full transition-all">
+                <span class="material-symbols-outlined">notifications</span>
+            </button>
+            <div class="h-8 w-[1px] bg-white/5 mx-1 md:mx-2"></div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden sm:block">
+                    <p id="nav-username" class="text-sm font-bold text-on-surface">Guest User</p>
+                    <p class="text-[10px] text-on-surface italic">GitHub Connected</p>
+                </div>
+                <img id="nav-avatar" alt="User Profile" class="h-9 w-9 rounded-full border border-white/10 object-cover bg-surface-container-high" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a7aaba'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08s5.97 1.09 6 3.08c-1.29 1.94-3.5 3.22-6 3.22z'/%3E%3C/svg%3E" />
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="ml-0 md:ml-64 min-h-[calc(100vh-4rem)] p-6 md:p-10 max-w-[1400px] mx-auto">
+        
+        <div class="w-full relative">
+            <!-- Header (Production Style) -->
+            <header class="mb-10">
+                <p class="text-[10px] uppercase tracking-widest text-indigo-500 font-bold mb-3">AI Urgency Evaluation</p>
+                <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-white/5">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2">Cognitive Triage</h2>
+                        <p class="text-slate-500 text-sm font-medium">Real-time priority assessment and risk mitigation</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div class="px-4 py-2 bg-slate-900 border border-white/5 rounded-xl flex items-center gap-3">
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Model Precision:</span>
+                            <span class="text-emerald-400 text-sm font-bold">94.2%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scan Controls (Solid) -->
+                <div class="mt-8 flex flex-col md:flex-row items-center gap-3">
+                    <div class="flex-1 flex gap-2 items-center bg-[#131725] border border-white/5 p-1.5 rounded-xl focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+                        <div class="pl-3 pr-1">
+                            <span class="material-symbols-outlined text-slate-500 text-sm">search</span>
+                        </div>
+                        <input type="text" id="repo-input" value="microsoft/vscode" class="bg-transparent border-none focus:ring-0 w-full text-sm text-white placeholder-slate-600 outline-none py-1.5" placeholder="owner/repo">
+                        <button id="scan-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2">
+                             Analyze Priority
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/5 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                        <span id="scan-status">Awaiting tasking...</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Left: Escalated Issues -->
+                <div class="lg:col-span-2 space-y-6">
+                    <h3 class="text-xl font-headline font-extrabold text-white flex items-center gap-2 tracking-tight">
+                        <span class="material-symbols-outlined text-error">priority_high</span> Live Triage Stream
+                    </h3>
+                    
+                    <!-- DYNAMIC CONTAINER -->
+                    <div id="issues-list" class="space-y-4">
+                        <!-- Javascript will dump glass-row issues here sequentially -->
+                        <div class="text-center py-20 opacity-50 grayscale">
+                            <span class="material-symbols-outlined text-4xl mb-4">hourglass_empty</span>
+                            <p>No issues loaded yet.</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Right: Metrics Sidebar -->
+                <div class="space-y-6">
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-[0.2em] mb-4">Risk Analytics</h3>
+                    
+                    <div class="ui-card p-8 text-center relative overflow-hidden">
+                        <!-- Subtle Background Pattern -->
+                        <div class="absolute inset-0 opacity-[0.03] pointer-events-none">
+                            <div class="absolute inset-0 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:20px_20px]"></div>
+                        </div>
+
+                        <div class="relative z-10">
+                            <div id="strain-index" class="text-6xl font-extrabold text-white tracking-tighter mb-2">--</div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-500">System Strain Index</p>
+                            <div class="mt-4 flex justify-center">
+                                <span id="strain-label" class="px-2 py-1 rounded bg-indigo-500/10 text-indigo-400 text-[10px] font-bold uppercase tracking-widest border border-indigo-500/20">Nominal</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="ui-card p-6 space-y-5">
+                        <h4 class="font-bold text-xs text-white uppercase tracking-widest mb-2">Issue Distribution</h4>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-2 font-bold">
+                                    <span class="text-rose-400">Critical (Sev-1)</span>
+                                    <span id="sev1-count" class="text-white">0</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                                    <div id="sev1-bar" class="h-full bg-rose-500 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-2 font-bold">
+                                    <span class="text-amber-400">High (Sev-2)</span>
+                                    <span id="sev2-count" class="text-white">0</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                                    <div id="sev2-bar" class="h-full bg-amber-500 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-[11px] mb-2 font-bold">
+                                    <span class="text-indigo-400">Medium (Sev-3)</span>
+                                    <span id="sev3-count" class="text-white">0</span>
+                                </div>
+                                <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                                    <div id="sev3-bar" class="h-full bg-indigo-500 rounded-full transition-all duration-700" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fixed bottom-6 right-6 md:bottom-8 md:right-8 w-12 h-12 md:w-14 md:h-14 bg-error text-white rounded-full flex items-center justify-center shadow-[0_10px_30px_rgba(255,110,132,0.5)] hover:scale-110 active:scale-95 transition-all z-40">
+        <span class="material-symbols-outlined">add_alert</span>
+    </button>
+</body>
+</html>

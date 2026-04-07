@@ -1,0 +1,120 @@
+/* Production-Ready Global Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Manrope:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --bg-base: #0a0c14;
+    --bg-surface: #131725;
+    --bg-surface-elevated: #1e2436;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-highlight: rgba(255, 255, 255, 0.12);
+    --primary: #6366f1; /* Indigo 500 */
+    --primary-hover: #4f46e5; /* Indigo 600 */
+    --text-main: #e2e8f0;
+    --text-muted: #94a3b8;
+}
+
+body {
+    background-color: var(--bg-base);
+    color: var(--text-main);
+    font-family: 'Inter', 'Manrope', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.5;
+}
+
+/* Material Symbols Standardized */
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* UI-Card Pattern (Production Style) */
+.ui-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 1rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ui-card:hover {
+    border-color: var(--border-highlight);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+/* Refined Row Pattern */
+.ui-row {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.ui-row:hover {
+    background: var(--bg-surface-elevated);
+    border-color: var(--border-highlight);
+}
+
+/* Standardized Solid Buttons */
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    box-shadow: 0 0 0 2px var(--bg-base), 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-main);
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-surface-elevated);
+    border-color: var(--border-highlight);
+}
+
+/* Remove AI Oracles/Glows (Refining redundant styles) */
+.oracle-pulse { display: none !important; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-base);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2a2f3e;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #3a3f4e;
+}
+
+/* Sidebar Specifics */
+.sidebar {
+    background: var(--bg-base);
+    border-right: 1px solid var(--border-subtle);
+}
+
+/* Responsive Overrides */
+@media (max-width: 768px) {
+    .main-content { margin-left: 0 !important; }
+}
