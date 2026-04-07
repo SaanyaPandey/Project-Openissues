@@ -85,7 +85,7 @@ Built during a <b>24-hour hackathon</b> at Chandigarh University.
 
 <h2>🤝 Team</h2>
 
-<p><b>Team Dominators 🚀</b></p>
+<p><b>Team Dominatorss 🚀</b></p>
 
 <hr/>
 
